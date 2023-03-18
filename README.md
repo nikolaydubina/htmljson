@@ -20,8 +20,15 @@
 var v any
 json.Unmarshal(exampleJSON, &v)
 
+htmlPage := htmljson.DefaultPageMarshalerm.Marshal(v)
+```
+
+```go
+// JSON has to be any
+var v any
+json.Unmarshal(exampleJSON, &v)
+
 // customize how to render HTML elements
-// use JSON path to find your element
 s := htmljson.Marshaler{
     Null:   htmljson.NullHTML,
     Bool:   htmljson.BoolHTML,
@@ -40,6 +47,9 @@ s := htmljson.Marshaler{
     Row:   htmljson.DefaultRowHTML{Padding: 4}.Marshal,
 }
 
+m := htmljson.DefaultPageMarshaler
+m.Marshaler = &s
+
 // write HTML page
-htmlPage := strings.ReplaceAll(htmljson.DefaultHTMLPageTemplate, `{{.HTMLJSON}}`, string(s.Marshal(v)))
+htmlPage := m.Marshal(v)
 ```
