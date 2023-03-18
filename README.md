@@ -12,7 +12,7 @@
 * no `fmt`
 * 300 LOC
 * customizable rendering
-* JSON Path in for elements access
+* JSON Path for elements access
 
 ![](./doc/example-color.png)
 
