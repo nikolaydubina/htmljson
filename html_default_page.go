@@ -4,25 +4,65 @@ import (
 	"bytes"
 	_ "embed"
 	"io"
-	"strings"
 )
 
 //go:embed html_default_page.html
-var DefaultHTMLPageTemplate string
+var defaultPageTemplate []byte
 
-func MarshalHTML(v any) []byte {
+var DefaultPageMarshaler = PageMarshaler{
+	Title:            "htmljson",
+	Template:         defaultPageTemplate,
+	TemplateTitleKey: `{{.Title}}`,
+	TemplateJSONKey:  `{{.HTMLJSON}}`,
+	Marshaler:        &DefaultMarshaler,
+}
+
+// PageMarshaler encodes JSON via marshaller into HTML page by placing Title and content appropriately.
+type PageMarshaler struct {
+	Title            string
+	Template         []byte
+	TemplateTitleKey string
+	TemplateJSONKey  string
+
+	Marshaler interface {
+		MarshalTo(w io.Writer, v any) error
+	}
+
+	idxTitle    int
+	idxHTMLJSON int
+}
+
+func (m *PageMarshaler) Marshal(v any) []byte {
 	b := bytes.Buffer{}
-	MarshalHTMLTo(&b, v)
+	m.MarshalTo(&b, v)
 	return b.Bytes()
 }
 
-func MarshalHTMLTo(w io.Writer, v any) (written int64, err error) {
-	var b bytes.Buffer
-	b.Grow(1000)
+func (m *PageMarshaler) parseTemplate() {
+	if m.idxTitle == 0 || m.idxHTMLJSON == 0 {
+		m.idxTitle = bytes.Index(m.Template, []byte(m.TemplateTitleKey))
+		m.idxHTMLJSON = bytes.Index(m.Template, []byte(m.TemplateJSONKey))
+	}
+}
 
-	jsonHTML := DefaultMarshaler.Marshal(v)
-	b.WriteString(strings.ReplaceAll(DefaultHTMLPageTemplate, `{{.HTMLJSON}}`, string(jsonHTML)))
+func (m *PageMarshaler) MarshalTo(w io.Writer, v any) error {
+	m.parseTemplate()
 
-	n, err := w.Write(b.Bytes())
-	return int64(n), err
+	var s int
+
+	if f := m.idxTitle; f > 0 {
+		w.Write(m.Template[s:f])
+		s = f + len(m.TemplateTitleKey)
+		w.Write([]byte(m.Title))
+	}
+
+	if f := m.idxHTMLJSON; f > 0 {
+		w.Write(m.Template[s:f])
+		s = f + len(m.TemplateJSONKey)
+		m.Marshaler.MarshalTo(w, v)
+	}
+
+	w.Write(m.Template[s:])
+
+	return nil
 }

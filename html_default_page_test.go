@@ -20,7 +20,7 @@ func TestMarshalHTML(t *testing.T) {
 	var v any
 	json.Unmarshal(exampleJSON, &v)
 
-	h := htmljson.MarshalHTML(v)
+	h := htmljson.DefaultPageMarshaler.Marshal(v)
 
 	os.WriteFile("testdata/example-page.out.html", h, 0666)
 	if strings.TrimSpace(examplePageHTML) != strings.TrimSpace(string(h)) {
@@ -50,7 +50,10 @@ func TestMarshalHTML_Color(t *testing.T) {
 		Row:   htmljson.DefaultRowHTML{Padding: 4}.Marshal,
 	}
 
-	htmlPage := strings.ReplaceAll(htmljson.DefaultHTMLPageTemplate, `{{.HTMLJSON}}`, string(s.Marshal(v)))
+	m := htmljson.DefaultPageMarshaler
+	m.Marshaler = &s
+
+	htmlPage := m.Marshal(v)
 
 	os.WriteFile("testdata/example-page-color.out.html", []byte(htmlPage), 0666)
 	if strings.TrimSpace(examplePageColorHTML) != strings.TrimSpace(string(htmlPage)) {
