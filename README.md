@@ -10,6 +10,7 @@
 * no Javascript
 * no reflection
 * no dependencies
+* no `fmt`
 * 300 LOC
 * customizable rendering
 * JSON Path in for elements access
