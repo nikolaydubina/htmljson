@@ -8,8 +8,8 @@
 
 * pure Go
 * no Javascript
-* no reflection
 * no dependencies
+* no `reflect`
 * no `fmt`
 * 300 LOC
 * customizable rendering
