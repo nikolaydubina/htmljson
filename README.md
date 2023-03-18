@@ -1,10 +1,8 @@
-## 🫐 htmljson
+## 🫐 htmljson: Rich Rendering of JSON as HTML in Go
 
 [![codecov](https://codecov.io/gh/nikolaydubina/htmljson/branch/master/graph/badge.svg?token=yXmNdIDn8O)](https://codecov.io/gh/nikolaydubina/htmljson)
 [![Go Report Card](https://goreportcard.com/badge/github.com/nikolaydubina/htmljson)](https://goreportcard.com/report/github.com/nikolaydubina/htmljson)
 [![Go Reference](https://pkg.go.dev/badge/github.com/nikolaydubina/htmljson.svg)](https://pkg.go.dev/github.com/nikolaydubina/htmljson)
-
-> Rich rendering of JSON as HTML in Go
 
 * pure Go
 * no Javascript
