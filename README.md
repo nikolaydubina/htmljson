@@ -54,3 +54,7 @@ m.Marshaler = &s
 // write HTML page
 htmlPage := m.Marshal(v)
 ```
+
+## Related Work
+
+- https://github.com/alecthomas/chroma can render many languages into HTML with syntax highligting
